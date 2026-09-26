@@ -4,6 +4,10 @@ services:
     environment:
       # 子片段等待父片段的最长时间（秒），可按需覆盖
       TRACING_MAX_PENDING_WAIT_SECONDS: "30"
+      # 入口基线：最低样本数、延迟劣化倍数、常规边频率门槛（均可覆盖）
+      TRACING_BASELINE_MIN_SAMPLES: "20"
+      TRACING_LATENCY_SLOW_FACTOR: "1.5"
+      TRACING_STRUCTURE_EDGE_FREQUENCY: "0.8"
     volumes:
       - tracing-data:/data
     expose:

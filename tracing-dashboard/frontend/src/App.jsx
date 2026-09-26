@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import TraceList from './components/TraceList.jsx';
 import Waterfall from './components/Waterfall.jsx';
 import DependencyGraph from './components/DependencyGraph.jsx';
+import EntryBrowser from './components/EntryBrowser.jsx';
 import { subscribeEvents } from './api.js';
 
-// 两个页面：请求检索（含瀑布图）和服务依赖图
+// 三个页面：请求检索（含瀑布图）、服务依赖图、入口对照
 export default function App() {
   const [page, setPage] = useState('traces');
   const [selectedTrace, setSelectedTrace] = useState(null);
@@ -17,6 +18,7 @@ export default function App() {
       hello: () => setConnected(true),
       span_update: () => setRefreshTick((n) => n + 1),
       graph_update: () => setRefreshTick((n) => n + 1),
+      baseline_update: () => setRefreshTick((n) => n + 1),
     });
     return () => sub.close();
   }, []);
@@ -38,6 +40,12 @@ export default function App() {
           >
             服务依赖图
           </button>
+          <button
+            className={page === 'entries' ? 'active' : ''}
+            onClick={() => setPage('entries')}
+          >
+            入口对照
+          </button>
         </nav>
         <span className={`conn ${connected ? 'on' : 'off'}`}>
           {connected ? '实时推送已连接' : '推送连接中…'}
@@ -53,8 +61,10 @@ export default function App() {
               <div className="placeholder-panel">从左侧列表选择一次请求查看瀑布图</div>
             )}
           </div>
-        ) : (
+        ) : page === 'graph' ? (
           <DependencyGraph refreshTick={refreshTick} />
+        ) : (
+          <EntryBrowser refreshTick={refreshTick} />
         )}
       </main>
     </div>

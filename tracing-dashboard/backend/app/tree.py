@@ -223,6 +223,7 @@ class TraceAssembler:
             "span_id": span.span_id,
             "parent_span_id": span.parent_span_id,
             "service": span.service,
+            "operation": span.operation,
             "start_time": span.start_time,
             "end_time": span.end_time,
             "duration": span.duration,

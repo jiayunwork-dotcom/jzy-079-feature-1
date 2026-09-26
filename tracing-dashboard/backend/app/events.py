@@ -44,6 +44,15 @@ class EventBus:
         self._graph_dirty = True
         self._maybe_push_graph()
 
+    def publish_baselines(self, entries: list[str]) -> None:
+        """入口基线或对照结果发生变化时实时推给前端。"""
+        self._publish(
+            {
+                "event": "baseline_update",
+                "data": {"entries": entries},
+            }
+        )
+
     def _maybe_push_graph(self) -> None:
         now = time.monotonic()
         if now - self._last_graph_push >= self._graph_debounce:

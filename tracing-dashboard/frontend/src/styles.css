@@ -370,3 +370,246 @@ main {
   text-anchor: middle;
   pointer-events: none;
 }
+
+/* ------------------------------------------------------------- 入口对照 */
+.entries-page {
+  height: 100%;
+}
+.entry-list {
+  background: #161d28;
+  border: 1px solid #232c3a;
+  border-radius: 10px;
+  padding: 16px;
+}
+.entry-list h2 {
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+.entry-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.entry-list th,
+.entry-list td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #232c3a;
+}
+.entry-list th {
+  color: #8a94a6;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.entry-row {
+  cursor: pointer;
+}
+.entry-row:hover {
+  background: #1a2331;
+}
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+.badge.unformed {
+  background: rgba(245, 166, 35, 0.15);
+  color: #f5a623;
+  border: 1px solid rgba(245, 166, 35, 0.5);
+}
+.badge.regular {
+  background: rgba(70, 196, 110, 0.12);
+  color: #46c46e;
+  border: 1px solid rgba(70, 196, 110, 0.4);
+}
+.anomaly-count {
+  color: #ff9a9e;
+  font-weight: 600;
+}
+.expand-hint {
+  color: #8a94a6;
+  font-weight: 400;
+  margin-left: 6px;
+}
+.muted {
+  color: #6a748a;
+}
+.edge-added {
+  color: #f5a623;
+}
+.edge-missing {
+  color: #e5484d;
+}
+.anomaly-row-panel td {
+  background: #121925;
+  padding: 10px 18px;
+}
+.anomaly-table {
+  width: 100%;
+}
+.anomaly-table th,
+.anomaly-table td {
+  padding: 6px 10px;
+  font-size: 12px;
+  max-width: none;
+}
+.anomaly-table button {
+  background: transparent;
+  border: 1px solid #324056;
+  color: #aeb8c9;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 3px 10px;
+}
+.anomaly-table button:hover {
+  border-color: #2a6fdb;
+  color: #fff;
+}
+
+/* 对照详情弹层 */
+.comparison-detail {
+  position: fixed;
+  right: 20px;
+  top: 70px;
+  bottom: 20px;
+  width: 560px;
+  background: #1d2735;
+  border: 1px solid #324056;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  z-index: 20;
+}
+.comparison-detail .detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.comparison-detail h3 {
+  margin: 0;
+  font-size: 14px;
+}
+.comparison-detail .detail-header button {
+  background: transparent;
+  border: 1px solid #324056;
+  color: #aeb8c9;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 4px 10px;
+}
+.cmp-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #8a94a6;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.status-tag {
+  align-self: flex-start;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.status-normal {
+  background: rgba(70, 196, 110, 0.15);
+  color: #46c46e;
+}
+.status-degraded,
+.status-degraded_drifted {
+  background: rgba(229, 72, 77, 0.18);
+  color: #ff9a9e;
+}
+.status-drifted {
+  background: rgba(245, 166, 35, 0.18);
+  color: #f5a623;
+}
+.status-unformed {
+  background: rgba(138, 148, 166, 0.18);
+  color: #aeb8c9;
+}
+.unformed-banner {
+  background: rgba(245, 166, 35, 0.12);
+  border: 1px solid rgba(245, 166, 35, 0.5);
+  color: #f5c265;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.cmp-section {
+  margin-top: 14px;
+}
+.cmp-section h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #dfe5ee;
+}
+.latency-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.latency-grid > div {
+  background: #161d28;
+  border: 1px solid #232c3a;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.metric-label {
+  color: #8a94a6;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.metric-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+.quantile-strip {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.quantile-chip {
+  background: #161d28;
+  border: 1px solid #232c3a;
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 11px;
+  color: #aeb8c9;
+}
+.drift-block {
+  margin-bottom: 10px;
+}
+.drift-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.drift-block ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.baseline-edges {
+  margin-top: 12px;
+}
+.baseline-edges table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.baseline-edges th,
+.baseline-edges td {
+  padding: 5px 8px;
+  border-bottom: 1px solid #232c3a;
+  text-align: left;
+}
+.baseline-edges tr.row-added {
+  background: rgba(245, 166, 35, 0.08);
+}
+.baseline-edges tr.row-missing {
+  background: rgba(229, 72, 77, 0.08);
+}

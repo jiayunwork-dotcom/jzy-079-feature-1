@@ -15,6 +15,12 @@ export default function SpanDetail({ span, onClose }) {
         <dd className="mono">{span.parent_span_id ?? '（根片段）'}</dd>
         <dt>服务</dt>
         <dd>{span.service}</dd>
+        {span.operation != null && (
+          <>
+            <dt>入口标识</dt>
+            <dd>{span.operation}</dd>
+          </>
+        )}
         <dt>开始时间</dt>
         <dd>{span.start_time}</dd>
         <dt>结束时间</dt>

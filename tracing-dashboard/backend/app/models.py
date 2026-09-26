@@ -18,6 +18,9 @@ class SpanIn(BaseModel):
     span_id: Optional[str] = None
     parent_span_id: Optional[str] = None
     service: Optional[str] = None
+    # 入口标识：根片段上的 operation 标识这次请求打的是哪个对外操作；
+    # 非根片段上允许携带，但归类只看根片段。缺省为 null（归入默认操作）。
+    operation: Optional[str] = None
     start_time: Optional[float] = None
     end_time: Optional[float] = None
     status_code: Optional[int] = None
@@ -37,6 +40,7 @@ class SpanRecord:
         "span_id",
         "parent_span_id",
         "service",
+        "operation",
         "start_time",
         "end_time",
         "status_code",
@@ -51,11 +55,13 @@ class SpanRecord:
         start_time: float,
         end_time: float,
         status_code: int,
+        operation: Optional[str] = None,
     ) -> None:
         self.trace_id = trace_id
         self.span_id = span_id
         self.parent_span_id = parent_span_id
         self.service = service
+        self.operation = operation
         self.start_time = start_time
         self.end_time = end_time
         self.status_code = status_code
@@ -74,6 +80,7 @@ class SpanRecord:
             "span_id": self.span_id,
             "parent_span_id": self.parent_span_id,
             "service": self.service,
+            "operation": self.operation,
             "start_time": self.start_time,
             "end_time": self.end_time,
             "status_code": self.status_code,
@@ -89,6 +96,7 @@ class SpanRecord:
             start_time=span.start_time,
             end_time=span.end_time,
             status_code=span.status_code,
+            operation=span.operation,
         )
 
     @classmethod
@@ -101,4 +109,5 @@ class SpanRecord:
             start_time=row["start_time"],
             end_time=row["end_time"],
             status_code=row["status_code"],
+            operation=row["operation"] if "operation" in row.keys() else None,
         )

@@ -75,4 +75,54 @@ post([
      "status_code": 200},
 ])
 
+
+# ---------------------------------------------------------------- 入口对照
+# 入口 gateway/createOrder 的常规结构：
+#   gateway -> order -> mysql / inventory
+# 先铺一批「平时」的样本（22 次，跨过默认最低门槛 20），再给三种异常各一条：
+# 延迟劣化、多出一条从未见过的调用边、缺了一条常规边。
+def order_spans(trace_id, base, duration=300.0, risk=False, with_inventory=True,
+                operation="createOrder", root_service="gateway"):
+    spans = [
+        {"trace_id": trace_id, "span_id": "gw", "parent_span_id": None,
+         "service": root_service, "operation": operation,
+         "start_time": base, "end_time": base + duration, "status_code": 200},
+        {"trace_id": trace_id, "span_id": "order", "parent_span_id": "gw",
+         "service": "order", "start_time": base + 10,
+         "end_time": base + duration - 10, "status_code": 200},
+        {"trace_id": trace_id, "span_id": "mysql", "parent_span_id": "order",
+         "service": "mysql", "start_time": base + 30, "end_time": base + 120,
+         "status_code": 200},
+    ]
+    if with_inventory:
+        spans.append(
+            {"trace_id": trace_id, "span_id": "inventory",
+             "parent_span_id": "order", "service": "inventory",
+             "start_time": base + 40, "end_time": base + 110, "status_code": 200}
+        )
+    if risk:
+        spans.append(
+            {"trace_id": trace_id, "span_id": "riskcheck",
+             "parent_span_id": "order", "service": "riskcheck",
+             "start_time": base + 50, "end_time": base + 90, "status_code": 200}
+        )
+    return spans
+
+
+for i in range(22):
+    post(order_spans(f"demo-baseline-{i:02d}", now - 20 * 60_000 + i * 1000))
+
+# 延迟劣化：端到端 1200ms，远超平时的 ~300ms
+post(order_spans("demo-slow-anomaly", now - 3 * 60_000, duration=1200.0))
+
+# 结构漂移（新增边）：order -> riskcheck 在基线里从没出现过
+post(order_spans("demo-extra-edge", now - 2 * 60_000, risk=True))
+
+# 结构漂移（消失边）：常规的 order -> inventory 这次没走
+post(order_spans("demo-missing-edge", now - 1 * 60_000, with_inventory=False))
+
+# 一个样本还不够、基线未成型的入口：gateway/healthCheck
+post(order_spans("demo-health-01", now - 30_000, duration=12.0,
+                 operation="healthCheck", with_inventory=False))
+
 print(f"\n演示数据已上报到 {BASE}，打开前端查看。")

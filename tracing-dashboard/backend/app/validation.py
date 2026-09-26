@@ -48,6 +48,9 @@ def validate_span(span: SpanIn) -> SpanRecord:
     # 根片段父编号为 null 是合法的；空字符串不是
     if span.parent_span_id is not None and _is_blank(span.parent_span_id):
         missing.append("parent_span_id")
+    # operation 可缺省（null）；一旦给出就不允许是空白字符串
+    if span.operation is not None and _is_blank(span.operation):
+        missing.append("operation")
     if span.start_time is None:
         missing.append("start_time")
     if span.end_time is None:
