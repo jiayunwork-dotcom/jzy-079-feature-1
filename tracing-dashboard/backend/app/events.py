@@ -17,6 +17,8 @@ class EventBus:
         self._graph_debounce = graph_debounce_seconds
         self._last_graph_push = 0.0
         self._graph_dirty = False
+        self._last_baseline_push = 0.0
+        self._baseline_dirty = False
 
     def subscribe(self) -> asyncio.Queue:
         queue: asyncio.Queue = asyncio.Queue(maxsize=100)
@@ -43,6 +45,8 @@ class EventBus:
         )
         self._graph_dirty = True
         self._maybe_push_graph()
+        self._baseline_dirty = True
+        self._maybe_push_baseline()
 
     def _maybe_push_graph(self) -> None:
         now = time.monotonic()
@@ -57,3 +61,17 @@ class EventBus:
             self._graph_dirty = False
             self._last_graph_push = time.monotonic()
             self._publish({"event": "graph_update", "data": {}})
+
+    def _maybe_push_baseline(self) -> None:
+        now = time.monotonic()
+        if now - self._last_baseline_push >= self._graph_debounce:
+            self._last_baseline_push = now
+            self._baseline_dirty = False
+            self._publish({"event": "baseline_update", "data": {}})
+
+    def flush_baseline(self) -> None:
+        """强制把积压的入口基线更新推出去。"""
+        if self._baseline_dirty:
+            self._baseline_dirty = False
+            self._last_baseline_push = time.monotonic()
+            self._publish({"event": "baseline_update", "data": {}})

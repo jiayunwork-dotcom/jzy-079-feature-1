@@ -64,3 +64,41 @@ def get_graph(
             detail=f"不支持的时间窗口 {window!r}，可选: {sorted(WINDOWS)}",
         )
     return svc.get_graph(window)
+
+
+@router.get("/entries")
+def list_entries(svc: TracingService = Depends(get_service)) -> dict:
+    """入口浏览：样本量、延迟分位基线、最近被判异常的请求。"""
+    return svc.list_entries()
+
+
+@router.get("/entries/detail")
+def get_entry_detail(
+    service_name: str = Query(..., alias="service"),
+    operation: str = Query("default"),
+    svc: TracingService = Depends(get_service),
+) -> dict:
+    detail = svc.get_entry_detail(service_name, operation)
+    if detail is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"入口 {service_name}/{operation} 尚不存在",
+        )
+    return detail
+
+
+@router.get("/comparisons/{trace_id}")
+def get_comparison(
+    trace_id: str, svc: TracingService = Depends(get_service)
+) -> dict:
+    """某次请求相对其入口基线的对照结果（慢在哪档、新增/消失哪些边）。"""
+    result = svc.get_comparison(trace_id)
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                f"trace {trace_id} 没有对照结果"
+                "（可能尚未归位，或无清晰根片段未参与归类）"
+            ),
+        )
+    return result

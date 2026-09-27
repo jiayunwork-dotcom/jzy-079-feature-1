@@ -4,6 +4,12 @@ services:
     environment:
       # 子片段等待父片段的最长时间（秒），可按需覆盖
       TRACING_MAX_PENDING_WAIT_SECONDS: "30"
+      # 入口基线成型所需最低样本条数
+      TRACING_BASELINE_MIN_SAMPLES: "20"
+      # 端到端耗时超过基线 p95 的该倍数判为延迟劣化
+      TRACING_LATENCY_SLOW_MULTIPLIER: "1.5"
+      # 调用边出现率达到该比例才算入口常规路径
+      TRACING_STRUCTURE_REGULAR_RATIO: "0.8"
     volumes:
       - tracing-data:/data
     expose:

@@ -39,6 +39,19 @@ export function getGraph(windowKey) {
   return request(`/api/graph?window=${encodeURIComponent(windowKey)}`);
 }
 
+export function listEntries() {
+  return request('/api/entries');
+}
+
+export function getEntryDetail(service, operation) {
+  const params = new URLSearchParams({ service, operation });
+  return request(`/api/entries/detail?${params.toString()}`);
+}
+
+export function getComparison(traceId) {
+  return request(`/api/comparisons/${encodeURIComponent(traceId)}`);
+}
+
 export function submitSpans(spans) {
   return request('/api/spans', {
     method: 'POST',

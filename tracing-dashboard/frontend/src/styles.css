@@ -370,3 +370,207 @@ main {
   text-anchor: middle;
   pointer-events: none;
 }
+
+/* ---------------- 入口基线对照页 ---------------- */
+.entries-page {
+  display: grid;
+  grid-template-columns: minmax(560px, 1.2fr) minmax(420px, 1fr);
+  gap: 16px;
+  height: 100%;
+  align-items: start;
+}
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #dfe5ee;
+}
+.entry-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.entry-list th,
+.entry-list td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #232c3a;
+  vertical-align: middle;
+}
+.entry-list th {
+  color: #8a94a6;
+  font-weight: 500;
+}
+.muted {
+  color: #8a94a6;
+}
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+.badge-immature {
+  background: #332c1a;
+  color: #d9b96a;
+  border: 1px solid #5a4d2a;
+}
+.anomaly-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.anomaly-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #2a1d22;
+  border: 1px solid #5c3038;
+  color: #e5a5a8;
+  padding: 2px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 11px;
+}
+.anomaly-chip:hover {
+  background: #3a242b;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot-latency {
+  background: #e5484d;
+}
+.dot-structure {
+  background: #e2a03f;
+}
+
+/* ---------------- 对照详情 ---------------- */
+.comparison-detail {
+  background: #161d28;
+  border: 1px solid #232c3a;
+  border-radius: 10px;
+  padding: 16px;
+}
+.close-btn {
+  background: transparent;
+  border: 1px solid #324056;
+  color: #aeb8c9;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 2px 9px;
+}
+.cmp-entry {
+  margin: 8px 0 12px;
+  font-size: 13px;
+}
+.status-banner {
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+.status-ok {
+  background: #172a1e;
+  color: #46c46e;
+  border: 1px solid #27503a;
+}
+.status-degraded {
+  background: #2a1719;
+  color: #ff7a7f;
+  border: 1px solid #5c2a2e;
+}
+.status-drifted {
+  background: #2a2215;
+  color: #e2b25f;
+  border: 1px solid #5a482a;
+}
+.status-both {
+  background: #2a1719;
+  color: #ff8f6b;
+  border: 1px solid #5c2a2e;
+}
+.status-immature {
+  background: #1e2430;
+  color: #9aa6ba;
+  border: 1px solid #33405a;
+}
+.immature-note {
+  color: #9aa6ba;
+  line-height: 1.7;
+}
+.cmp-panel {
+  border-top: 1px solid #232c3a;
+  padding-top: 12px;
+  margin-top: 12px;
+}
+.cmp-panel h3 {
+  margin: 0 0 10px;
+  font-size: 13px;
+}
+.cmp-latency-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+.cmp-current {
+  text-align: center;
+  min-width: 110px;
+}
+.cmp-big {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ff8f6b;
+}
+.cmp-vs {
+  color: #6a748a;
+}
+.mini-table {
+  border-collapse: collapse;
+}
+.mini-table th,
+.mini-table td {
+  padding: 3px 12px 3px 0;
+  text-align: left;
+  border-bottom: 1px solid #232c3a;
+}
+.cmp-line {
+  line-height: 1.9;
+}
+.text-danger {
+  color: #ff7a7f;
+}
+.text-ok {
+  color: #46c46e;
+}
+.edge-group {
+  margin-top: 10px;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.edge-group-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.edge-added {
+  background: rgba(226, 160, 63, 0.08);
+  border: 1px solid #5a482a;
+}
+.edge-missing {
+  background: rgba(229, 72, 77, 0.07);
+  border: 1px solid #5c2a2e;
+}
+.edge-group ul {
+  margin: 4px 0;
+  padding-left: 18px;
+}
+.edge-group li {
+  line-height: 1.8;
+}
+.edge-arrow {
+  color: #dfe5ee;
+}

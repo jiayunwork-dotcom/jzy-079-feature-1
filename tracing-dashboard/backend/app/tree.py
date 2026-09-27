@@ -138,6 +138,33 @@ class TraceAssembler:
     def has_trace(self, trace_id: str) -> bool:
         return trace_id in self._traces
 
+    def pending_count(self, trace_id: str) -> int:
+        """该 trace 仍在等待父片段的片段数（会先推进超时归位）。"""
+        state = self._traces.get(trace_id)
+        if state is None:
+            return 0
+        self.flush_expired()
+        return len(state.pending)
+
+    def root_spans(self, trace_id: str) -> list[SpanRecord]:
+        """显式根片段（parent_span_id 为 None），按开始时间排序。"""
+        state = self._traces.get(trace_id)
+        if state is None:
+            return []
+        return sorted(
+            (state.spans[sid] for sid in state.root_span_ids),
+            key=lambda s: (s.start_time, s.span_id),
+        )
+
+    def trace_span_bounds(self, trace_id: str) -> Optional[tuple[float, float]]:
+        """整棵树（含全部已到片段）的最早开始 / 最晚结束时间。"""
+        state = self._traces.get(trace_id)
+        if state is None or not state.spans:
+            return None
+        starts = [s.start_time for s in state.spans.values()]
+        ends = [s.end_time for s in state.spans.values()]
+        return min(starts), max(ends)
+
     def build_tree(
         self, trace_id: str, now_ms: Optional[float] = None
     ) -> Optional[dict]:

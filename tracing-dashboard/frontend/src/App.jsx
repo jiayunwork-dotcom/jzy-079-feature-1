@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import TraceList from './components/TraceList.jsx';
 import Waterfall from './components/Waterfall.jsx';
 import DependencyGraph from './components/DependencyGraph.jsx';
+import EntryList from './components/EntryList.jsx';
+import ComparisonDetail from './components/ComparisonDetail.jsx';
 import { subscribeEvents } from './api.js';
 
-// 两个页面：请求检索（含瀑布图）和服务依赖图
+// 三个页面：请求检索（含瀑布图）、服务依赖图、入口基线对照
 export default function App() {
   const [page, setPage] = useState('traces');
   const [selectedTrace, setSelectedTrace] = useState(null);
+  const [comparisonSelection, setComparisonSelection] = useState(null);
   // 每次收到后端推送就 +1，触发各组件重新拉数据
   const [refreshTick, setRefreshTick] = useState(0);
   const [connected, setConnected] = useState(false);
@@ -17,6 +20,7 @@ export default function App() {
       hello: () => setConnected(true),
       span_update: () => setRefreshTick((n) => n + 1),
       graph_update: () => setRefreshTick((n) => n + 1),
+      baseline_update: () => setRefreshTick((n) => n + 1),
     });
     return () => sub.close();
   }, []);
@@ -38,6 +42,12 @@ export default function App() {
           >
             服务依赖图
           </button>
+          <button
+            className={page === 'entries' ? 'active' : ''}
+            onClick={() => setPage('entries')}
+          >
+            入口基线对照
+          </button>
         </nav>
         <span className={`conn ${connected ? 'on' : 'off'}`}>
           {connected ? '实时推送已连接' : '推送连接中…'}
@@ -53,8 +63,26 @@ export default function App() {
               <div className="placeholder-panel">从左侧列表选择一次请求查看瀑布图</div>
             )}
           </div>
-        ) : (
+        ) : page === 'graph' ? (
           <DependencyGraph refreshTick={refreshTick} />
+        ) : (
+          <div className="entries-page">
+            <EntryList
+              onSelect={setComparisonSelection}
+              refreshTick={refreshTick}
+            />
+            {comparisonSelection ? (
+              <ComparisonDetail
+                selection={comparisonSelection}
+                onClose={() => setComparisonSelection(null)}
+                refreshTick={refreshTick}
+              />
+            ) : (
+              <div className="placeholder-panel">
+                从右侧入口列表的“最近异常”里选择一次请求，查看它与所属入口基线的对照
+              </div>
+            )}
+          </div>
         )}
       </main>
     </div>

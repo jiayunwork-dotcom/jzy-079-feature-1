@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS spans (
     start_time     REAL NOT NULL,
     end_time       REAL NOT NULL,
     status_code    INTEGER NOT NULL,
+    operation      TEXT,
     received_at    REAL NOT NULL,
     PRIMARY KEY (trace_id, span_id)
 );
@@ -39,6 +40,18 @@ class SpanStore:
         self._conn.row_factory = sqlite3.Row
         self._conn.execute("PRAGMA journal_mode=WAL")
         self._conn.executescript(_SCHEMA)
+        self._migrate()
+
+    def _migrate(self) -> None:
+        """老版本库没有 operation 列：原地补列，不丢历史片段。"""
+        with self._lock:
+            cols = {
+                r["name"]
+                for r in self._conn.execute("PRAGMA table_info(spans)").fetchall()
+            }
+            if "operation" not in cols:
+                self._conn.execute("ALTER TABLE spans ADD COLUMN operation TEXT")
+                self._conn.commit()
 
     def insert_span(self, span: SpanRecord, received_at_ms: float) -> bool:
         """插入片段；(trace_id, span_id) 已存在则忽略。返回是否新插入。"""
@@ -47,8 +60,8 @@ class SpanStore:
                 """
                 INSERT OR IGNORE INTO spans
                   (trace_id, span_id, parent_span_id, service,
-                   start_time, end_time, status_code, received_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                   start_time, end_time, status_code, operation, received_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     span.trace_id,
@@ -58,6 +71,7 @@ class SpanStore:
                     span.start_time,
                     span.end_time,
                     span.status_code,
+                    span.operation,
                     received_at_ms,
                 ),
             )
@@ -78,6 +92,22 @@ class SpanStore:
                 "SELECT * FROM spans ORDER BY start_time, span_id"
             ).fetchall()
         return [SpanRecord.from_row(dict(r)) for r in rows]
+
+    def trace_replay_order(self) -> list[str]:
+        """重启回放时的 trace 次序：按最早开始时间，再按最早入库时间。
+
+        开始时间相同时用 received_at 还原运行时的定版先后，保证“先判后并”
+        重放出的基线版本、对照结果与线上一致。
+        """
+        with self._lock:
+            rows = self._conn.execute(
+                """
+                SELECT trace_id, MIN(start_time) AS s, MIN(received_at) AS r
+                FROM spans GROUP BY trace_id
+                ORDER BY s, r, trace_id
+                """
+            ).fetchall()
+        return [r["trace_id"] for r in rows]
 
     def list_traces(
         self,

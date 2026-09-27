@@ -21,6 +21,9 @@ class SpanIn(BaseModel):
     start_time: Optional[float] = None
     end_time: Optional[float] = None
     status_code: Optional[int] = None
+    # 入口标识：根片段上标注“这次请求打的是哪个对外操作”；
+    # 非根片段上忽略。缺省归一到 DEFAULT_ENTRY_OPERATION
+    operation: Optional[str] = None
 
 
 class SpanBatchIn(BaseModel):
@@ -40,6 +43,7 @@ class SpanRecord:
         "start_time",
         "end_time",
         "status_code",
+        "operation",
     )
 
     def __init__(
@@ -51,6 +55,7 @@ class SpanRecord:
         start_time: float,
         end_time: float,
         status_code: int,
+        operation: Optional[str] = None,
     ) -> None:
         self.trace_id = trace_id
         self.span_id = span_id
@@ -59,6 +64,7 @@ class SpanRecord:
         self.start_time = start_time
         self.end_time = end_time
         self.status_code = status_code
+        self.operation = operation
 
     @property
     def duration(self) -> float:
@@ -77,6 +83,7 @@ class SpanRecord:
             "start_time": self.start_time,
             "end_time": self.end_time,
             "status_code": self.status_code,
+            "operation": self.operation,
         }
 
     @classmethod
@@ -89,6 +96,7 @@ class SpanRecord:
             start_time=span.start_time,
             end_time=span.end_time,
             status_code=span.status_code,
+            operation=span.operation,
         )
 
     @classmethod
@@ -101,4 +109,5 @@ class SpanRecord:
             start_time=row["start_time"],
             end_time=row["end_time"],
             status_code=row["status_code"],
+            operation=row["operation"] if "operation" in row.keys() else None,
         )
